@@ -1,0 +1,16 @@
+- name: Find files not accessed or modified in the last 180 days
+  hosts: test_servers
+  become: yes
+  tasks:
+
+    - name: Find files older than 180 days (not accessed or modified)
+      find:
+        paths: /home/ubuntu  # Change this to your target directory
+        age: 180d  # Files not accessed or modified in the last 180 days
+        file_type: file  # Only search for files
+        recurse: yes
+      register: stale_files
+
+    - name: Display the list of stale files
+      debug:
+        msg: "{{ stale_files.files | map(attribute='path') | list }}"
