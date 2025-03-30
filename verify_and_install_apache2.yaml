@@ -1,0 +1,30 @@
+- name: Check if port 80 is in use before installing Apache2
+  hosts: test-servers
+  become: yes
+  tasks:
+    - name: Check if port 80 is in use
+      shell: "ss -tulnp | grep ':80 ' || true"
+      register: port_check
+      changed_when: false
+
+    - name: Debug output (Shows port usage if any)
+      debug:
+        msg: "{{ port_check.stdout_lines }}"
+
+    - name: Install Apache2 if port 80 is free
+      apt:
+        name: apache2
+        state: present
+      when: port_check.stdout == ""
+
+    - name: Start and enable Apache2 service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+      when: port_check.stdout == ""
+
+    - name: Print message if port 80 is occupied
+      debug:
+        msg: "Port 80 is already in use. Skipping Apache installation."
+      when: port_check.stdout != ""
