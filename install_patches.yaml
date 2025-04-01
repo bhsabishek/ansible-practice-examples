@@ -12,7 +12,7 @@
 
     - name: Reboot the machine if necessary
       reboot:
-        reboot_timeout: 600
+        reboot_timeout: 600 # Need to specify the time in seconds
         test_command: uptime
         msg: "Rebooting the machine after patching"
     
