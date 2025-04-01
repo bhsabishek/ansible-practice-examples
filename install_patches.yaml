@@ -14,3 +14,13 @@
       reboot:
         reboot_timeout: 600
         test_command: uptime
+        msg: "Rebooting the machine after patching"
+    
+    - name: Get uptime after reboot
+      shell: uptime  # Run uptime command
+      register: uptime_output
+
+    - name: Show the output of the test_command (uptime) immediately
+      debug:
+        msg: "Reboot test command output: {{ uptime_output.stdout }}"
+      when: uptime_output is defined  # Only run if reboot_result was registered
