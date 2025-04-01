@@ -1,0 +1,16 @@
+- name: Install patches and reboot server
+  hosts: test_servers
+  become: yes
+  tasks:
+    - name: Install security updates
+      apt:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - "openssl"
+        - "curl"
+
+    - name: Reboot the machine if necessary
+      reboot:
+        reboot_timeout: 600
+        test_command: uptime
